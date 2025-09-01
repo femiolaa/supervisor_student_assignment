@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 
 # Load Excel files
 students_file = "SIWES 2025.xlsx"
@@ -12,13 +13,17 @@ supervisors_df = pd.read_excel(supervisors_file)
 students = students_df.iloc[:, 0].tolist()
 supervisors = supervisors_df.iloc[:, 0].tolist()
 
-# Calculate the number of supervisors
-num_supervisors = len(supervisors)
+# Shuffle supervisors for random assignment
+random.shuffle(supervisors)
 
-# Assign supervisors to students in a round-robin manner
+# Repeat supervisors if there are more students than supervisors
+if len(students) > len(supervisors):
+    supervisors = supervisors * (len(students) // len(supervisors)) + random.sample(supervisors, len(students) % len(supervisors))
+
+# Assign supervisors to students
 assignments = {}
 for i, student in enumerate(students):
-    supervisor = supervisors[i % num_supervisors]  # Assign by index
+    supervisor = supervisors[i % len(supervisors)]  # Assign randomly shuffled supervisors
     assignments[student] = supervisor
 
 # Create a DataFrame to save results
